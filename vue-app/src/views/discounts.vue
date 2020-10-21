@@ -1,35 +1,42 @@
-<script>
-import { mapActions, mapGetters } from 'vuex';
+<script lang="ts">
+import { computed, defineComponent, onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import ListHeader from '@/components/list-header.vue';
+import store from '../store';
+import type { Discount } from '../store/modules/models';
 
-export default {
+interface ComponentState {
+  errorMessage: Ref<string>;
+  discounts: Ref<Discount[]>;
+}
+
+export default defineComponent({
   name: 'Discounts',
-  data() {
+  components: { ListHeader },
+  setup() {
+    const state: ComponentState = {
+      errorMessage: ref(''),
+      discounts: computed(() => store.getters.discounts),
+    };
+
+    async function getDiscounts() {
+      state.errorMessage.value = '';
+      try {
+        await store.dispatch('getDiscountsAction');
+      } catch (error) {
+        console.error(error);
+        state.errorMessage.value = 'Unauthorized';
+      }
+    }
+
+    onMounted(getDiscounts);
+
     return {
-      errorMessage: '',
+      ...state,
+      getDiscounts,
     };
   },
-  components: {
-    ListHeader,
-  },
-  async created() {
-    await this.getDiscounts();
-  },
-  computed: {
-    ...mapGetters('discounts', { discounts: 'discounts' }),
-  },
-  methods: {
-    ...mapActions('discounts', ['getDiscountsAction']),
-    async getDiscounts() {
-      this.errorMessage = undefined;
-      try {
-        await this.getDiscountsAction();
-      } catch (error) {
-        this.errorMessage = 'Unauthorized';
-      }
-    },
-  },
-};
+});
 </script>
 
 <template>

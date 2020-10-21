@@ -1,42 +1,61 @@
-<script>
+<script lang="ts">
+import { defineComponent, ref, toRefs, watch } from 'vue';
+import type { PropType, Ref, SetupContext } from 'vue';
 import ButtonFooter from '@/components/button-footer.vue';
+import { Product } from '../../store/modules/models';
 
-export default {
+interface Props {
+  product: Product;
+}
+
+interface ComponentState {
+  addMode: Ref<boolean>;
+  editingProduct: Ref<Product>;
+}
+
+export default defineComponent({
   name: 'ProductDetail',
   props: {
     product: {
-      type: Object,
-      default() {},
+      type: Object as PropType<Product>,
+      default: () => new Product(0),
     },
   },
   components: { ButtonFooter },
-  data() {
-    return {
-      addMode: false,
-      editingProduct: { ...this.product },
+  setup(props: Props, context: SetupContext) {
+    const { product } = toRefs(props);
+    const state: ComponentState = {
+      addMode: ref(false),
+      editingProduct: ref({ ...product.value }),
     };
-  },
-  watch: {
-    product() {
-      if (this.product && this.product.id) {
-        this.editingProduct = { ...this.product };
-        this.addMode = false;
+
+    watch(product, (/* newValue, oldValue */) => {
+      if (product.value && product.value.id) {
+        state.editingProduct.value = { ...product.value };
+        state.addMode.value = false;
       } else {
-        this.editingProduct = { id: undefined, name: '', description: '' };
-        this.addMode = true;
+        state.editingProduct.value = {
+          id: 0,
+          name: '',
+          description: '',
+          quantity: 0,
+        };
+        state.addMode.value = true;
       }
-    },
+    });
+
+    function clear() {
+      context.emit('unselect');
+    }
+
+    function saveProduct() {
+      context.emit('save', state.editingProduct.value);
+      clear();
+    }
+
+    return { ...state, clear, saveProduct };
   },
-  methods: {
-    clear() {
-      this.$emit('unselect');
-    },
-    saveProduct() {
-      this.$emit('save', this.editingProduct);
-      this.clear();
-    },
-  },
-};
+});
 </script>
 
 <template>

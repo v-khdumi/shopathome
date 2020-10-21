@@ -1,15 +1,18 @@
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'AuthLogout',
-  methods: {
-    goAuth() {
+  setup() {
+    const goAuth = () => {
       const { pathname } = window.location;
       const redirect = `post_logout_redirect_uri=${pathname}`;
       const url = `/.auth/logout?${redirect}`;
       window.location.href = url;
-    },
+    };
+    return { goAuth };
   },
-};
+});
 </script>
 
 <template>

@@ -1,15 +1,16 @@
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import ButtonFooter from '@/components/button-footer.vue';
 import CardContent from '@/components/card-content.vue';
+import type { Product } from '../../store/modules/models';
 
 const captains = console;
 
-export default {
+export default defineComponent({
   name: 'ProductList',
   props: {
     products: {
-      type: Array,
-      default: () => [],
+      type: Array as () => Array<Product>,
     },
     errorMessage: {
       type: String,
@@ -20,17 +21,20 @@ export default {
     CardContent,
     ButtonFooter,
   },
-  methods: {
-    deleteProduct(product) {
-      this.$emit('deleted', product);
-      captains.log(`You tried to delete ${product.name}`);
-    },
-    selectProduct(product) {
-      captains.log(`You tried to select ${product.name}`);
-      this.$emit('selected', product);
-    },
+  setup(props, context) {
+    function deleteProduct(p: Product) {
+      context.emit('deleted', p);
+      captains.log(`You tried to delete ${p.name}`);
+    }
+
+    function selectProduct(p: Product) {
+      captains.log(`You tried to select ${p.name}`);
+      context.emit('selected', p);
+    }
+
+    return { deleteProduct, selectProduct };
   },
-};
+});
 </script>
 
 <template>
@@ -52,7 +56,7 @@ export default {
             <ButtonFooter
               class="delete-item"
               iconClasses="fas fa-trash"
-              @clicked="deleteProduct"
+              @clicked="deleteProduct(product)"
               label="Delete"
               :dataIndex="index"
               :dataId="product.id"
@@ -61,7 +65,7 @@ export default {
             <ButtonFooter
               class="edit-item"
               iconClasses="fas fa-edit"
-              @clicked="selectProduct"
+              @clicked="selectProduct(product)"
               label="Edit"
               :dataIndex="index"
               :dataId="product.id"

@@ -1,5 +1,13 @@
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, SetupContext } from 'vue';
+
+interface Props {
+  title: string;
+  routePath: string;
+  showAdd: boolean;
+}
+
+export default defineComponent({
   name: 'ListHeader',
   props: {
     title: {
@@ -15,15 +23,21 @@ export default {
       default: () => true,
     },
   },
-  methods: {
-    handleAdd() {
-      this.$emit('add');
-    },
-    handleRefresh() {
-      this.$emit('refresh');
-    },
+  setup(props: Props, context: SetupContext) {
+    function handleAdd() {
+      context.emit('add');
+    }
+
+    function handleRefresh() {
+      context.emit('refresh');
+    }
+
+    return {
+      handleAdd,
+      handleRefresh,
+    };
   },
-};
+});
 </script>
 
 <template>

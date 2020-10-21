@@ -1,39 +1,48 @@
-<script>
+<script lang="ts">
+import { defineComponent, onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import AuthLogin from '@/components/auth-login.vue';
 import AuthLogout from '@/components/auth-logout.vue';
 
-export default {
+const getUserInfo = async () => {
+  try {
+    const response = await fetch('/.auth/me');
+    const payload = await response.json();
+    const { clientPrincipal } = payload;
+    return clientPrincipal;
+  } catch (error) {
+    console.error('No profile could be found');
+    return undefined;
+  }
+};
+
+interface ComponentState {
+  userInfo: Ref<string>;
+  providers: Ref<Array<string>>;
+}
+
+export default defineComponent({
   name: 'NavBar',
   components: {
     AuthLogin,
     AuthLogout,
   },
-  data() {
+  setup() {
+    const state = {
+      userInfo: ref({}),
+      providers: ref(['twitter', 'github', 'aad', 'google', 'facebook']),
+    };
+
+    onMounted(async () => {
+      state.userInfo = await getUserInfo();
+    });
+
     return {
-      userInfo: {
-        type: Object,
-        default() {},
-      },
-      providers: ['twitter', 'github', 'aad', 'google', 'facebook'],
+      getUserInfo,
+      ...state,
     };
   },
-  async created() {
-    this.userInfo = await this.getUserInfo();
-  },
-  methods: {
-    async getUserInfo() {
-      try {
-        const response = await fetch('/.auth/me');
-        const payload = await response.json();
-        const { clientPrincipal } = payload;
-        return clientPrincipal;
-      } catch (error) {
-        console.error('No profile could be found');
-        return undefined;
-      }
-    },
-  },
-};
+});
 </script>
 <template>
   <div class="column is-2">
@@ -49,8 +58,8 @@ export default {
       <p class="menu-label">Auth</p>
       <div class="menu-list auth">
         <template v-if="!userInfo">
-          <template v-for="provider in providers">
-            <AuthLogin :key="provider" :provider="provider" />
+          <template v-for="provider in providers" :key="provider">
+            <AuthLogin :provider="provider" />
           </template>
         </template>
         <AuthLogout v-if="userInfo" />

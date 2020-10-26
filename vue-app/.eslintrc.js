@@ -24,6 +24,8 @@ module.exports = {
     'no-unused-vars': 'off',
     'no-useless-constructor': 'off',
     'no-empty-function': 'off',
+    'import/prefer-default-export': 'off',
+    'no-use-before-define': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
     '@typescript-eslint/no-unused-vars': ['error'],
     'lines-between-class-members': 'off',

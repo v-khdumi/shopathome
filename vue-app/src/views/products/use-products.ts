@@ -12,7 +12,6 @@ interface ProductsComponentState {
   selected: Product | null;
   showModal: boolean;
   title: string;
-  count: number;
   products: Product[];
 }
 
@@ -25,7 +24,6 @@ export function useProducts() {
     selected: null,
     showModal: false,
     title: 'My List',
-    count: 0,
     products: computed(() => store.getters.products as Product[]),
   });
 

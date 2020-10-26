@@ -39,11 +39,11 @@ export default defineComponent({
       default: () => '',
     },
   },
-  setup(props: Props, context: SetupContext) {
+  setup(props: Props, { emit }: SetupContext) {
     const { item } = toRefs(props);
 
     function handleClick() {
-      context.emit('clicked', item.value);
+      emit('clicked', item.value);
     }
 
     return {

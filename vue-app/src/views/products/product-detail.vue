@@ -22,7 +22,7 @@ export default defineComponent({
     },
   },
   components: { ButtonFooter },
-  setup(props: Props, context: SetupContext) {
+  setup(props: Props, { emit }: SetupContext) {
     const { product } = toRefs(props);
     const state: ComponentState = reactive({
       addMode: false,
@@ -45,11 +45,11 @@ export default defineComponent({
     });
 
     function clear() {
-      context.emit('unselect');
+      emit('unselect');
     }
 
     function saveProduct() {
-      context.emit('save', state.editingProduct);
+      emit('save', state.editingProduct);
       clear();
     }
 

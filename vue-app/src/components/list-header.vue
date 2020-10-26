@@ -23,13 +23,13 @@ export default defineComponent({
       default: () => true,
     },
   },
-  setup(props: Props, context: SetupContext) {
+  setup(props: Props, { emit }: SetupContext) {
     function handleAdd() {
-      context.emit('add');
+      emit('add');
     }
 
     function handleRefresh() {
-      context.emit('refresh');
+      emit('refresh');
     }
 
     return {

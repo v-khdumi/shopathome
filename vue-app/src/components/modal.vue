@@ -18,13 +18,13 @@ export default defineComponent({
       default: () => false,
     },
   },
-  setup(props: Props, context: SetupContext) {
+  setup(props: Props, { emit }: SetupContext) {
     function onNo() {
-      context.emit('handle-no');
+      emit('handle-no');
     }
 
     function onYes() {
-      context.emit('handle-yes');
+      emit('handle-yes');
     }
 
     return {

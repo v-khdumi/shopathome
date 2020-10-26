@@ -2,6 +2,7 @@
 import { defineComponent, onMounted, reactive } from 'vue';
 import AuthLogin from '@/components/auth-login.vue';
 import AuthLogout from '@/components/auth-logout.vue';
+import { useAuth } from '../composables/use-auth';
 
 const getUserInfo = async () => {
   try {
@@ -20,8 +21,6 @@ interface ComponentState {
   providers: Array<string>;
 }
 
-const authProviders = ['twitter', 'github', 'aad', 'google', 'facebook'];
-
 export default defineComponent({
   name: 'NavBar',
   components: {
@@ -29,9 +28,11 @@ export default defineComponent({
     AuthLogout,
   },
   setup() {
+    const { authProviders: providers } = useAuth();
+
     const state = reactive({
       userInfo: {},
-      providers: authProviders,
+      providers,
     });
 
     onMounted(async () => {

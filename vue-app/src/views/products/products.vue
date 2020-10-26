@@ -1,25 +1,10 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, Ref, ref } from 'vue';
+import { defineComponent, onMounted, toRefs } from 'vue';
 import ListHeader from '@/components/list-header.vue';
 import Modal from '@/components/modal.vue';
 import ProductDetail from '@/views/products/product-detail.vue';
 import ProductList from '@/views/products/product-list.vue';
-import store from '../../store';
-import { Product } from '../../store/modules/models';
-
-const captains = console;
-
-interface ComponentState {
-  errorMessage: Ref<string>;
-  message: Ref<string>;
-  productToDelete: Ref<Product | null>;
-  routePath: Ref<string>;
-  selected: Ref<Product | null>;
-  showModal: Ref<boolean>;
-  title: Ref<string>;
-  count: Ref<number>;
-  products: Ref<Product[]>;
-}
+import { useProducts } from './use-products';
 
 export default defineComponent({
   name: 'Products',
@@ -31,85 +16,22 @@ export default defineComponent({
   },
 
   setup() {
-    const state: ComponentState = {
-      errorMessage: ref(''),
-      message: ref(''),
-      productToDelete: ref(null),
-      routePath: ref('/products'),
-      selected: ref(null),
-      showModal: ref(false),
-      title: ref('My List'),
-      count: ref(0),
-      products: computed(() => store.getters.products as Product[]),
-    };
-
-    function askToDelete(p: Product) {
-      state.productToDelete.value = p;
-      state.showModal.value = true;
-      if (state.productToDelete.value.name) {
-        state.message.value = `Would you like to delete ${state.productToDelete.value.name}?`;
-        captains.log(state.message.value);
-      }
-    }
-
-    function clear() {
-      state.productToDelete.value = null;
-      state.selected.value = null;
-      state.message.value = '';
-    }
-
-    function closeModal() {
-      state.showModal.value = false;
-    }
-
-    async function deleteProduct() {
-      closeModal();
-      if (state.productToDelete.value) {
-        captains.log(
-          `You said you want to delete ${state.productToDelete.value.name}`,
-        );
-        await store.dispatch(
-          'deleteProductAction',
-          state.productToDelete.value,
-        );
-      }
-      clear();
-    }
-
-    function enableAddMode() {
-      state.selected.value = new Product(0);
-    }
-
-    async function getProducts() {
-      state.errorMessage.value = '';
-      try {
-        await store.dispatch('getProductsAction');
-      } catch (error) {
-        state.errorMessage.value = 'Unauthorized';
-      }
-      clear();
-    }
-
-    // create a js module that handles all saving activity
-    // save, delete, add => in the module
-    // useSavingProducts(state);
-    async function save(p: Product) {
-      captains.log('product changed', p);
-      if (p.id) {
-        await store.dispatch('updateProductAction', p);
-      } else {
-        await store.dispatch('addProductAction', p);
-      }
-    }
-
-    function select(p: Product) {
-      state.selected.value = p;
-    }
+    const {
+      askToDelete,
+      clear,
+      closeModal,
+      deleteProduct,
+      enableAddMode,
+      getProducts,
+      save,
+      select,
+      state,
+    } = useProducts();
 
     onMounted(async () => getProducts());
 
     return {
-      ...state,
+      ...toRefs(state),
       askToDelete,
       clear,
       closeModal,

@@ -1,38 +1,18 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
-import type { Ref } from 'vue';
+import { toRefs, defineComponent, onMounted } from 'vue';
 import ListHeader from '@/components/list-header.vue';
-import store from '../store';
-import type { Discount } from '../store/modules/models';
-
-interface ComponentState {
-  errorMessage: Ref<string>;
-  discounts: Ref<Discount[]>;
-}
+import { useDiscounts } from './use-discounts';
 
 export default defineComponent({
   name: 'Discounts',
   components: { ListHeader },
   setup() {
-    const state: ComponentState = {
-      errorMessage: ref(''),
-      discounts: computed(() => store.getters.discounts),
-    };
+    const { getDiscounts, state } = useDiscounts();
 
-    async function getDiscounts() {
-      state.errorMessage.value = '';
-      try {
-        await store.dispatch('getDiscountsAction');
-      } catch (error) {
-        console.error(error);
-        state.errorMessage.value = 'Unauthorized';
-      }
-    }
-
-    onMounted(getDiscounts);
+    onMounted(() => getDiscounts());
 
     return {
-      ...state,
+      ...toRefs(state),
       getDiscounts,
     };
   },

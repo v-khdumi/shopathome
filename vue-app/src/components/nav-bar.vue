@@ -1,6 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
-import type { Ref } from 'vue';
+import { defineComponent, onMounted, reactive } from 'vue';
 import AuthLogin from '@/components/auth-login.vue';
 import AuthLogout from '@/components/auth-logout.vue';
 
@@ -17,8 +16,8 @@ const getUserInfo = async () => {
 };
 
 interface ComponentState {
-  userInfo: Ref<{}>;
-  providers: Ref<Array<string>>;
+  userInfo: {};
+  providers: Array<string>;
 }
 
 const authProviders = ['twitter', 'github', 'aad', 'google', 'facebook'];
@@ -30,10 +29,10 @@ export default defineComponent({
     AuthLogout,
   },
   setup() {
-    const state = {
-      userInfo: ref({}),
-      providers: ref(authProviders),
-    };
+    const state = reactive({
+      userInfo: {},
+      providers: authProviders,
+    });
 
     onMounted(async () => {
       state.userInfo = await getUserInfo();

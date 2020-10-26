@@ -1,6 +1,6 @@
 <script lang="ts">
-import { defineComponent, ref, toRefs, watch } from 'vue';
-import type { PropType, Ref, SetupContext } from 'vue';
+import { defineComponent, reactive, toRefs, watch } from 'vue';
+import type { PropType, SetupContext } from 'vue';
 import ButtonFooter from '@/components/button-footer.vue';
 import { Product } from '../../store/modules/models';
 
@@ -9,8 +9,8 @@ interface Props {
 }
 
 interface ComponentState {
-  addMode: Ref<boolean>;
-  editingProduct: Ref<Product>;
+  addMode: boolean;
+  editingProduct: Product;
 }
 
 export default defineComponent({
@@ -24,23 +24,23 @@ export default defineComponent({
   components: { ButtonFooter },
   setup(props: Props, context: SetupContext) {
     const { product } = toRefs(props);
-    const state: ComponentState = {
-      addMode: ref(false),
-      editingProduct: ref({ ...product.value }),
-    };
+    const state: ComponentState = reactive({
+      addMode: false,
+      editingProduct: { ...product.value },
+    });
 
     watch(product, (/* newValue, oldValue */) => {
       if (product.value && product.value.id) {
-        state.editingProduct.value = { ...product.value };
-        state.addMode.value = false;
+        state.editingProduct = { ...product.value };
+        state.addMode = false;
       } else {
-        state.editingProduct.value = {
+        state.editingProduct = {
           id: 0,
           name: '',
           description: '',
           quantity: 0,
         };
-        state.addMode.value = true;
+        state.addMode = true;
       }
     });
 
@@ -49,7 +49,7 @@ export default defineComponent({
     }
 
     function saveProduct() {
-      context.emit('save', state.editingProduct.value);
+      context.emit('save', state.editingProduct);
       clear();
     }
 

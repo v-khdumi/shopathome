@@ -4,18 +4,6 @@ import AuthLogin from '@/components/auth-login.vue';
 import AuthLogout from '@/components/auth-logout.vue';
 import { useAuth } from '../composables/use-auth';
 
-const getUserInfo = async () => {
-  try {
-    const response = await fetch('/.auth/me');
-    const payload = await response.json();
-    const { clientPrincipal } = payload;
-    return clientPrincipal;
-  } catch (error) {
-    console.error('No profile could be found');
-    return undefined;
-  }
-};
-
 interface ComponentState {
   userInfo: {};
   providers: Array<string>;
@@ -28,7 +16,7 @@ export default defineComponent({
     AuthLogout,
   },
   setup() {
-    const { authProviders: providers } = useAuth();
+    const { authProviders: providers, getUserInfo } = useAuth();
 
     const state = reactive({
       userInfo: {},

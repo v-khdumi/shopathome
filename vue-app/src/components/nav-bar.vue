@@ -17,9 +17,11 @@ const getUserInfo = async () => {
 };
 
 interface ComponentState {
-  userInfo: Ref<string>;
+  userInfo: Ref<{}>;
   providers: Ref<Array<string>>;
 }
+
+const authProviders = ['twitter', 'github', 'aad', 'google', 'facebook'];
 
 export default defineComponent({
   name: 'NavBar',
@@ -30,7 +32,7 @@ export default defineComponent({
   setup() {
     const state = {
       userInfo: ref({}),
-      providers: ref(['twitter', 'github', 'aad', 'google', 'facebook']),
+      providers: ref(authProviders),
     };
 
     onMounted(async () => {

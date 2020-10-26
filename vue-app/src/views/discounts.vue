@@ -1,7 +1,7 @@
 <script lang="ts">
 import { toRefs, defineComponent, onMounted, reactive, computed } from 'vue';
 import ListHeader from '@/components/list-header.vue';
-import { useDiscounts } from './use-discounts';
+import { useDiscounts } from '../composables/use-discounts';
 import { Discount } from '../store/modules/models';
 import store from '../store';
 

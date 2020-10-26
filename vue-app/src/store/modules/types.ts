@@ -1,6 +1,7 @@
 import type { Discount, Product } from './models';
 
 export interface RootState {}
+
 export interface DiscountsState {
   discounts: Discount[];
 }

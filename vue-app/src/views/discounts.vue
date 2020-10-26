@@ -5,7 +5,7 @@ import { useDiscounts } from '../composables/use-discounts';
 import { Discount } from '../store/modules/models';
 import store from '../store';
 
-export interface DiscountsComponentState {
+export interface ComponentState {
   errorMessage: string;
   discounts: Discount[];
 }
@@ -14,7 +14,7 @@ export default defineComponent({
   name: 'Discounts',
   components: { ListHeader },
   setup() {
-    const state: DiscountsComponentState = reactive({
+    const state: ComponentState = reactive({
       errorMessage: '',
       discounts: computed(() => store.getters.discounts),
     });

@@ -1,10 +1,25 @@
 <script lang="ts">
-import { defineComponent, onMounted, toRefs } from 'vue';
+import { computed, defineComponent, onMounted, reactive, toRefs } from 'vue';
 import ListHeader from '@/components/list-header.vue';
 import Modal from '@/components/modal.vue';
 import ProductDetail from '@/views/products/product-detail.vue';
 import ProductList from '@/views/products/product-list.vue';
 import { useProducts } from './use-products';
+import { Product } from '../../store/modules/models';
+import store from '../../store';
+
+const captains = console;
+
+interface ComponentState {
+  errorMessage: string;
+  message: string;
+  productToDelete: Product | null;
+  routePath: string;
+  selected: Product | null;
+  showModal: boolean;
+  title: string;
+  products: Product[];
+}
 
 export default defineComponent({
   name: 'Products',
@@ -17,19 +32,79 @@ export default defineComponent({
 
   setup() {
     const {
-      askToDelete,
-      clear,
-      closeModal,
-      deleteProduct,
-      enableAddMode,
-      getProducts,
-      save,
-      select,
-      state,
+      deleteProductAction,
+      getProductsAction,
+      updateProductAction,
+      addProductAction,
     } = useProducts();
 
+    const state: ComponentState = reactive({
+      errorMessage: '',
+      message: '',
+      productToDelete: null,
+      routePath: '/products',
+      selected: null,
+      showModal: false,
+      title: 'My List',
+      products: computed(() => store.getters.products as Product[]),
+    });
     onMounted(async () => getProducts());
 
+    function askToDelete(p: Product) {
+      state.productToDelete = p;
+      state.showModal = true;
+      if (state.productToDelete.name) {
+        state.message = `Would you like to delete ${state.productToDelete.name}?`;
+        captains.log(state.message);
+      }
+    }
+
+    function clear() {
+      state.productToDelete = null;
+      state.selected = null;
+      state.message = '';
+    }
+
+    function closeModal() {
+      state.showModal = false;
+    }
+
+    async function deleteProduct() {
+      closeModal();
+      if (state.productToDelete) {
+        captains.log(
+          `You said you want to delete ${state.productToDelete.name}`,
+        );
+        await deleteProductAction(state.productToDelete);
+      }
+      clear();
+    }
+
+    function enableAddMode() {
+      state.selected = new Product(0);
+    }
+
+    async function save(p: Product) {
+      captains.log('product changed', p);
+      if (p.id) {
+        await updateProductAction(p);
+      } else {
+        await addProductAction(p);
+      }
+    }
+
+    function select(p: Product) {
+      state.selected = p;
+    }
+    async function getProducts() {
+      state.errorMessage = '';
+      try {
+        await getProductsAction();
+      } catch (error) {
+        console.error(error);
+        state.errorMessage = 'Unauthorized';
+      }
+    }
     return {
       ...toRefs(state),
       askToDelete,

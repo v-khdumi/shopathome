@@ -7,7 +7,7 @@ import type { Product } from '../../store/modules/models';
 const captains = console;
 
 interface Props {
-  product: Array<Product>;
+  products: Array<Product>;
   errorMessage: string;
 }
 
@@ -16,6 +16,7 @@ export default defineComponent({
   props: {
     products: {
       type: Array as () => Array<Product>,
+      default: () => [],
     },
     errorMessage: {
       type: String,

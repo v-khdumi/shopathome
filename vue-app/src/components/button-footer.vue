@@ -6,7 +6,7 @@ interface Props {
   className: String;
   label: String;
   dataIndex: Number;
-  dataId?: Number;
+  dataId?: String;
   iconClasses: String;
 }
 
@@ -32,7 +32,7 @@ export default defineComponent({
       default: () => null,
     },
     dataId: {
-      type: Number,
+      type: String,
     },
     iconClasses: {
       type: String,

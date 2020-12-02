@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import PageNotFound from '@/components/page-not-found.vue';
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     redirect: '/home',

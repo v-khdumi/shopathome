@@ -1,8 +1,10 @@
 export class Discount {
-  id: number = 0;
-  store?: string = '';
-  percentage?: number = 0;
-  code?: string = '';
+  constructor(
+    public id: number = 0,
+    public store?: string,
+    public percentage?: number,
+    public code?: string,
+  ) {}
 }
 
 export class Product {

@@ -34,6 +34,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <template>
   <div class="column is-2">
     <nav class="menu">

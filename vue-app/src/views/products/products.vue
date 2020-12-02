@@ -84,6 +84,16 @@ export default defineComponent({
       state.selected = new Product(0);
     }
 
+    async function getProducts() {
+      state.errorMessage = '';
+      try {
+        await getProductsAction();
+      } catch (error) {
+        console.error(error);
+        state.errorMessage = 'Unauthorized';
+      }
+    }
+
     async function save(p: Product) {
       captains.log('product changed', p);
       if (p.id) {
@@ -96,15 +106,7 @@ export default defineComponent({
     function select(p: Product) {
       state.selected = p;
     }
-    async function getProducts() {
-      state.errorMessage = '';
-      try {
-        await getProductsAction();
-      } catch (error) {
-        console.error(error);
-        state.errorMessage = 'Unauthorized';
-      }
-    }
+
     return {
       ...toRefs(state),
       askToDelete,
